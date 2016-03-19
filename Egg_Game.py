@@ -26,7 +26,7 @@ time = pygame.time.get_ticks()
 
 
 #Time after which eggs fall(miliseconds)
-egg_delay = 5000
+egg_delay = 2000
 
 #Co-ordinates of the duck
 
@@ -66,6 +66,9 @@ while True:
 	if( pygame.time.get_ticks() >= time + egg_delay):
 		time = pygame.time.get_ticks()
 		eggs.append(Egg(random.randint(duck_x - 50, duck_x + 50),egg_h))
+		
+		#To make game tough <Add code for delay> probably exponential
+		#egg_delay -= 100
 
 
 	for egg in eggs:
