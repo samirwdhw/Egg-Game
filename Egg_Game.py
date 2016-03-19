@@ -21,6 +21,13 @@ duckImg = pygame.transform.scale(duckImg, (int(duck_w), int(duck_h)))
 movingRight = False
 movingLeft = False
 
+#To see time since game started
+time = pygame.time.get_ticks()
+
+
+#Time after which eggs fall(miliseconds)
+egg_delay = 5000
+
 #Co-ordinates of the duck
 
 duck_x = 0
@@ -49,14 +56,16 @@ class Egg(object):
 	def destroy(self):
 		eggs.remove(self)
 
-eggs.append(Egg(random.randint(duck_x - 50, duck_x + 50),egg_h))
-
 
 while True: 
 
 	DISPLAYSURF.fill(BGCOLOR)
 	DISPLAYSURF.blit(duckImg, (duck_x, duck_y))
 
+
+	if( pygame.time.get_ticks() >= time + egg_delay):
+		time = pygame.time.get_ticks()
+		eggs.append(Egg(random.randint(duck_x - 50, duck_x + 50),egg_h))
 
 
 	for egg in eggs:
