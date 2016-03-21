@@ -20,6 +20,16 @@ duckImg = pygame.image.load('duck.png')
 duckImg = pygame.transform.scale(duckImg, (int(duck_w), int(duck_h)))
 movingRight = False
 movingLeft = False
+movingUp = False
+
+#Speed of duck in y direction
+MOTIONSPEED_Y = 5
+
+#Height of duck jump
+JUMPHEIGHT = 20
+
+#To see direction of jump
+jumpDirection = False
 
 #To see time since game started
 time = pygame.time.get_ticks()
@@ -28,17 +38,52 @@ time = pygame.time.get_ticks()
 #Time after which eggs fall(miliseconds)
 egg_delay = 2000
 
+#Y co-ordinate of duck base
+BASELINE = 400
+
+
 #Co-ordinates of the duck
 
 duck_x = 0
-duck_y = 400
+duck_y = BASELINE
+
 
 #To store all the eggs
 eggs = []
 egg_w = 589/25
 egg_h = 800/25
 
+#To store broken eggs
+omlets = []
+
+class Omlet(object):
+
+	def __init__(self,x,y):
+		self.w = 600/10
+		self.h = 303/10
+		self.Img = pygame.image.load('broke_egg.png')
+		self.Img = pygame.transform.scale(self.Img, (self.w, self.h))
+		self.x = x
+		self.y = y
+		self.time = pygame.time.get_ticks()
+		
+		#Denotes time for which broken egg persists
+		self.lag = 1000
+
+	def checkValid(self):
+
+
+		if pygame.time.get_ticks() > self.time + self.lag:      
+			omlets.remove(self)
+
+def Eggbreak(x,y):
+	
+	omlet = Omlet(x,y)
+	omlets.append(omlet)
+
 #Egg things
+
+
 
 class Egg(object):
 
@@ -57,11 +102,35 @@ class Egg(object):
 		eggs.remove(self)
 
 
+def jump():
+	global movingUp
+
+	movingUp = True;
+
+
 while True: 
 
 	DISPLAYSURF.fill(BGCOLOR)
 	DISPLAYSURF.blit(duckImg, (duck_x, duck_y))
 
+	#To see if jump is executed
+
+	if movingUp == True:
+		
+		
+		if duck_y >= BASELINE - JUMPHEIGHT and jumpDirection == True:
+			duck_y -= MOTIONSPEED_Y
+		else:
+			duck_y += MOTIONSPEED_Y
+			jumpDirection = False
+
+
+		if duck_y >= BASELINE:
+			movingUp = False
+			jumpDirection = True
+			duck_y = BASELINE
+
+	#To generate randomly falling eggs
 
 	if( pygame.time.get_ticks() >= time + egg_delay):
 		time = pygame.time.get_ticks()
@@ -70,18 +139,29 @@ while True:
 		#To make game tough <Add code for delay> probably exponential
 		#egg_delay -= 100
 
+	#To do with omlets
+
+	for omlet in omlets:
+		omlet.checkValid()
+		DISPLAYSURF.blit(omlet.Img, (omlet.x, omlet.y))
+
+
+	#To do with eggs
 
 	for egg in eggs:
 		
 		if( egg.x in range(duck_x, duck_x + duck_w) and egg.y in range(duck_y, duck_y + duck_h)):
 			egg.destroy()
 
-		elif( egg.y >= duck_h + duck_y):
+		elif( egg.y >= duck_h + BASELINE):
+			Eggbreak(egg.x,BASELINE + duck_h)
 			egg.destroy()
 
 		else:
 			DISPLAYSURF.blit(egg.Img, (egg.x, egg.y))
 			egg.move()
+
+	#Checking for events
 
 	for event in pygame.event.get():
 		
@@ -91,6 +171,8 @@ while True:
 				movingLeft = True
 			elif event.key == K_RIGHT:
 				movingRight = True
+			if event.key == K_SPACE:
+				jump()
 
 		if event.type == KEYUP:
 			
