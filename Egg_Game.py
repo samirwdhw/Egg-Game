@@ -23,10 +23,10 @@ movingLeft = False
 movingUp = False
 
 #Speed of duck in y direction
-MOTIONSPEED_Y = 5
+MOTIONSPEED_Y = 8
 
 #Height of duck jump
-JUMPHEIGHT = 20
+JUMPHEIGHT = 40
 
 #To see direction of jump
 jumpDirection = False
