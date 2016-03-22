@@ -3,12 +3,17 @@
 import pygame, random, sys
 from pygame.locals import *
 
+pygame.init()
+
 FPS = 30 # frames per second, the general speed of the program
 WINDOWWIDTH = 640 # size of window's width in pixels
 WINDOWHEIGHT = 480 # size of windows' height in pixels
 BGCOLOR = (102,205,170)
 MOTIONSPEED = 10   #Speed of the moving duck
 fpsClock = pygame.time.Clock()
+
+#To check if game over
+gameLost = False
 
 #Initialize displaysurf
 DISPLAYSURF	= pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT), 0, 32)
@@ -134,6 +139,21 @@ class Egg(object):
 		eggs.remove(self)
 
 
+#Things after the game is over
+
+def gameOverScreen():
+	BGCOLOR = (220,20,60)
+	
+	myfont = pygame.font.Font("freesansbold.ttf", 15)
+	label = myfont.render("GAME OVER!", 1, (255,255,0))
+
+	DISPLAYSURF.fill(BGCOLOR)
+	DISPLAYSURF.blit
+	pygame.display.update()
+
+
+
+
 def jump():
 	global movingUp
 
@@ -167,7 +187,7 @@ while True:
 
 	if( pygame.time.get_ticks() >= time + egg_delay):
 		time = pygame.time.get_ticks()
-		eggs.append(Egg(random.randint(duck_x - 50, duck_x + 50),egg_h))
+		eggs.append(Egg(random.randint(max(duck_x - 50, 10), min(duck_x + 50, WINDOWWIDTH - 10)),egg_h))
 		
 		#To make game tough <Add code for delay> probably exponential
 		#egg_delay -= 100
@@ -182,6 +202,8 @@ while True:
 		if omlet.x in range(duck_x, duck_x + duck_w) and duck_y in (BASELINE - JUMPHEIGHT, BASELINE - JUMPHEIGHT/2 ) and omlet.chick_there == 1:
 			omlet.destroy()
 
+		if omlet.x <=0 or omlet.x >= WINDOWWIDTH:
+			gameLost = True
 
 		DISPLAYSURF.blit(omlet.Img, (omlet.x, omlet.y))
 
@@ -224,6 +246,9 @@ while True:
 		if event.type == QUIT:
 			pygame.quit()
 			sys.exit()		
+
+		if gameLost:
+			gameOverScreen()
 
 	if movingLeft == True and duck_x - MOTIONSPEED > 0:
 		duck_x  -= MOTIONSPEED
