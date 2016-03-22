@@ -144,14 +144,19 @@ class Egg(object):
 def gameOverScreen():
 	BGCOLOR = (220,20,60)
 	
-	myfont = pygame.font.Font("freesansbold.ttf", 15)
+	myfont = pygame.font.Font("freesansbold.ttf", 30)
 	label = myfont.render("GAME OVER!", 1, (255,255,0))
 
+	text_w, text_h = myfont.size("GAME OVER!")
+
 	DISPLAYSURF.fill(BGCOLOR)
-	DISPLAYSURF.blit
+	DISPLAYSURF.blit(label, (WINDOWWIDTH/2 - text_w/2, WINDOWHEIGHT/2 - text_h/2))
 	pygame.display.update()
 
-
+	pygame.event.wait()
+	pygame.event.wait()
+	pygame.quit()
+	sys.exit()
 
 
 def jump():
@@ -199,7 +204,7 @@ while True:
 		#Pudh 1 if chick should be there and 0 if it shouldnt be there
 		omlet.checkValid(1)
 
-		if omlet.x in range(duck_x, duck_x + duck_w) and duck_y in (BASELINE - JUMPHEIGHT, BASELINE - JUMPHEIGHT/2 ) and omlet.chick_there == 1:
+		if omlet.x in range(duck_x, duck_x + duck_w) and duck_y < BASELINE and omlet.chick_there == 1:
 			omlet.destroy()
 
 		if omlet.x <=0 or omlet.x >= WINDOWWIDTH:
@@ -247,8 +252,10 @@ while True:
 			pygame.quit()
 			sys.exit()		
 
-		if gameLost:
-			gameOverScreen()
+	#To do if the game has ended
+	if gameLost:
+		gameOverScreen()
+
 
 	if movingLeft == True and duck_x - MOTIONSPEED > 0:
 		duck_x  -= MOTIONSPEED
