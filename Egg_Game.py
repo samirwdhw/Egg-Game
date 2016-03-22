@@ -5,12 +5,18 @@ from pygame.locals import *
 
 pygame.init()
 
+#Font
+myfont = pygame.font.Font("freesansbold.ttf", 30)
+
 FPS = 30 # frames per second, the general speed of the program
 WINDOWWIDTH = 640 # size of window's width in pixels
 WINDOWHEIGHT = 480 # size of windows' height in pixels
 BGCOLOR = (102,205,170)
 MOTIONSPEED = 10   #Speed of the moving duck
 fpsClock = pygame.time.Clock()
+
+#To keep score
+SCORE = 0
 
 #To check if game over
 gameLost = False
@@ -142,15 +148,26 @@ class Egg(object):
 #Things after the game is over
 
 def gameOverScreen():
+	global myfont
+
 	BGCOLOR = (220,20,60)
 	
-	myfont = pygame.font.Font("freesansbold.ttf", 30)
+	
 	label = myfont.render("GAME OVER!", 1, (255,255,0))
 
 	text_w, text_h = myfont.size("GAME OVER!")
 
 	DISPLAYSURF.fill(BGCOLOR)
 	DISPLAYSURF.blit(label, (WINDOWWIDTH/2 - text_w/2, WINDOWHEIGHT/2 - text_h/2))
+	
+	score_string = "SCORE: " + str(SCORE)
+	score = myfont.render( score_string, 1, (0,0,128))
+
+	score_w, score_h = myfont.size(score_string)
+
+	DISPLAYSURF.blit(score, (WINDOWWIDTH/2 - score_w/2, WINDOWHEIGHT/2 + text_h/2 + 50))
+
+
 	pygame.display.update()
 
 	pygame.event.wait()
@@ -169,6 +186,11 @@ while True:
 
 	DISPLAYSURF.fill(BGCOLOR)
 	DISPLAYSURF.blit(duckImg, (duck_x, duck_y))
+
+	#To display score
+	score = myfont.render("SCORE: " + str(SCORE), 1, (0,0,128))
+
+	DISPLAYSURF.blit(score, (20, 20))
 
 	#To see if jump is executed
 
@@ -205,6 +227,7 @@ while True:
 		omlet.checkValid(1)
 
 		if omlet.x in range(duck_x, duck_x + duck_w) and duck_y < BASELINE and omlet.chick_there == 1:
+			SCORE += 50
 			omlet.destroy()
 
 		if omlet.x <=0 or omlet.x >= WINDOWWIDTH:
@@ -218,9 +241,11 @@ while True:
 	for egg in eggs:
 		
 		if( egg.x in range(duck_x, duck_x + duck_w) and egg.y in range(duck_y, duck_y + duck_h)):
+			SCORE += 25
 			egg.destroy()
 
 		elif( egg.y >= duck_h + BASELINE):
+			SCORE -= 10
 			Eggbreak(egg.x,BASELINE + duck_h)
 			egg.destroy()
 
