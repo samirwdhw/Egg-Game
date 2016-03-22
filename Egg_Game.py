@@ -66,15 +66,47 @@ class Omlet(object):
 		self.x = x
 		self.y = y
 		self.time = pygame.time.get_ticks()
-		
+		#To check if omlet has turned into a chick
+		self.chick_there = 0
+		#To see direction of motion
+		self.motionDir = "none"
 		#Denotes time for which broken egg persists
 		self.lag = 1000
 
-	def checkValid(self):
+	def makeChick(self):
+		self.w = 1291/40
+		self.h = 2394/40
+		self.y = BASELINE
+		self.Img = pygame.image.load('chick.png')
+		self.Img = pygame.transform.scale(self.Img, (self.w, self.h))
 
+		if duck_x > self.x:
+			self.motionDir = "right"
+		else:
+			self.motionDir = "left"
 
-		if pygame.time.get_ticks() > self.time + self.lag:      
-			omlets.remove(self)
+	def move(self):
+		
+		if self.motionDir == "right":
+			self.x += MOTIONSPEED/2
+		else:
+			self.x -= MOTIONSPEED/2
+
+	def checkValid(self, chick_there):
+
+		self.chick_there = chick_there
+
+		if pygame.time.get_ticks() > self.time + self.lag and self.motionDir == "none":      
+			
+			if self.chick_there == 0:
+				omlets.remove(self)
+			else:
+				self.makeChick()
+		elif pygame.time.get_ticks() > self.time + self.lag:
+			self.move()
+
+	def destroy(self):
+		omlets.remove(self)
 
 def Eggbreak(x,y):
 	
@@ -132,6 +164,7 @@ while True:
 
 	#To generate randomly falling eggs
 
+
 	if( pygame.time.get_ticks() >= time + egg_delay):
 		time = pygame.time.get_ticks()
 		eggs.append(Egg(random.randint(duck_x - 50, duck_x + 50),egg_h))
@@ -142,7 +175,14 @@ while True:
 	#To do with omlets
 
 	for omlet in omlets:
-		omlet.checkValid()
+		
+		#Pudh 1 if chick should be there and 0 if it shouldnt be there
+		omlet.checkValid(1)
+
+		if omlet.x in range(duck_x, duck_x + duck_w) and duck_y in (BASELINE - JUMPHEIGHT, BASELINE - JUMPHEIGHT/2 ) and omlet.chick_there == 1:
+			omlet.destroy()
+
+
 		DISPLAYSURF.blit(omlet.Img, (omlet.x, omlet.y))
 
 
