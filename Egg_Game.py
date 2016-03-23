@@ -5,6 +5,16 @@ from pygame.locals import *
 
 pygame.init()
 
+#Things for sounds
+jump_file = 'jump_sound.wav'
+coin_file = 'coin_sound.wav'
+gameOver_file = 'gameOver_sound.wav'
+eggBreak_file = 'eggBreak_sound.wav'
+pygame.init()
+pygame.mixer.init()
+
+
+
 #Font
 myfont = pygame.font.Font("freesansbold.ttf", 30)
 
@@ -265,7 +275,7 @@ def startScreen():
 
 	welcome_string = "\n\nWelcome to the game\n\nHope You enjoy it\n\nClick any button to continue"
 	story_string = "\n\nOne day mummy duck was walking down the road.\n Soon the weather turned bad and it started raining.\n But, it wasn't water, Her eggs were falling!!!"
-	controls_string = "\nCONTROLS:\n\n-> : Move right\n\n<- : Move Left\n\nSPACEBAR: Jump\n\n(Hint: Dont let the chicks get away)"
+	controls_string = "\nCONTROLS:\n\n-> : Move right\n\n<- : Move Left\n\nSPACEBAR: Jump to catch chicks\n\n(Hint: Dont let the chicks get away)"
 	
 	printThing(welcome_string)
 	printThing(story_string)
@@ -279,33 +289,37 @@ def gameOverScreen():
 
 	BGCOLOR = (220,20,60)
 	
+	pygame.mixer.music.load(gameOver_file)
+	pygame.mixer.music.play()
 	
 	label = myfont.render("GAME OVER!", 1, (255,255,0))
 
 	text_w, text_h = myfont.size("GAME OVER!")
 
 	DISPLAYSURF.fill(BGCOLOR)
-	DISPLAYSURF.blit(label, (WINDOWWIDTH/2 - text_w/2, WINDOWHEIGHT/2 - text_h/2))
+	DISPLAYSURF.blit(label, (WINDOWWIDTH/2 - text_w/2, WINDOWHEIGHT/2 - text_h/2 - 40))
 	
 	score_string = "SCORE: " + str(SCORE)
 	score = myfont.render( score_string, 1, (0,0,128))
 
 	score_w, score_h = myfont.size(score_string)
 
-	DISPLAYSURF.blit(score, (WINDOWWIDTH/2 - score_w/2, WINDOWHEIGHT/2 + text_h/2 + 50))
+	DISPLAYSURF.blit(score, (WINDOWWIDTH/2 - score_w/2, WINDOWHEIGHT/2 + text_h/2 + 50 - 40))
 
 
 	pygame.display.update()
 
 	pygame.event.wait()
-	#pygame.event.wait()
+	pygame.event.wait()
 	pygame.quit()
 	sys.exit()
 
 
 def jump():
-	global movingUp
+	global movingUp, jump_sound
 
+	pygame.mixer.music.load(jump_file)
+	pygame.mixer.music.play()
 	movingUp = True;
 
 
@@ -357,6 +371,9 @@ while True:
 
 		if omlet.x in range(duck_x, duck_x + duck_w) and duck_y < BASELINE and omlet.chick_there == 1:
 			SCORE += 50
+			pygame.mixer.music.load(coin_file)
+			pygame.mixer.music.play()
+
 			omlet.destroy()
 
 		if omlet.x <=0 or omlet.x >= WINDOWWIDTH:
@@ -371,10 +388,15 @@ while True:
 		
 		if( egg.x in range(duck_x, duck_x + duck_w) and egg.y in range(duck_y, duck_y + duck_h)):
 			SCORE += 25
+			pygame.mixer.music.load(coin_file)
+			pygame.mixer.music.play()
+
 			egg.destroy()
 
 		elif( egg.y >= duck_h + BASELINE):
 			SCORE -= 10
+			pygame.mixer.music.load(eggBreak_file)
+			pygame.mixer.music.play()
 			Eggbreak(egg.x,BASELINE + duck_h)
 			egg.destroy()
 
