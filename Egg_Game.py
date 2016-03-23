@@ -13,6 +13,9 @@ WINDOWWIDTH = 640 # size of window's width in pixels
 WINDOWHEIGHT = 480 # size of windows' height in pixels
 BGCOLOR = (102,205,170)
 MOTIONSPEED = 10   #Speed of the moving duck
+
+#Initial speed of the chick
+MOTIONSPEED_CHICK = 5
 fpsClock = pygame.time.Clock()
 
 #to render the text
@@ -123,7 +126,6 @@ jumpDirection = False
 #To see time since game started
 time = pygame.time.get_ticks()
 
-
 #Time after which eggs fall(miliseconds)
 egg_delay = 2000
 
@@ -178,11 +180,13 @@ class Omlet(object):
 	def move(self):
 		
 		if self.motionDir == "right":
-			self.x += MOTIONSPEED/2
+			self.x += MOTIONSPEED_CHICK
 		else:
-			self.x -= MOTIONSPEED/2
+			self.x -= MOTIONSPEED_CHICK
 
 	def checkValid(self, chick_there):
+
+		global MOTIONSPEED_CHICK
 
 		self.chick_there = chick_there
 
@@ -192,6 +196,9 @@ class Omlet(object):
 				omlets.remove(self)
 			else:
 				self.makeChick()
+				#To make the game difficult
+				MOTIONSPEED_CHICK += 1
+
 		elif pygame.time.get_ticks() > self.time + self.lag:
 			self.move()
 
@@ -223,28 +230,22 @@ class Egg(object):
 	def destroy(self):
 		eggs.remove(self)
 
-#Things to do when the game starts
+#To wait for a button click
 
-def startScreen():
+def printThing(wrtieUp):
 
-	global myfont
+	global DISPLAYSURF
 
 	BGCOLOR = (220,20,60)
 
-	welcome_string = "Welcome to the game\n Hope You enjoy it\n Click any button to continue"
-	story_string = "One day mummy duck was walking down the road. Soon the weather turned bad and it started raining. But, it wasn't water, Her eggs were falling!!!"
-	controls_string = "-> : Move right\n<- : Move Left\nSPACEBAR: Jump\n(Hint: Dont let the chicks get away)"
-	
-	welcome = myfont.render(welcome_string, 1, (0,0,128))
-
- 	my_rect = pygame.Rect((40, 40, 300, 300))
- 	rendered_text = render_textrect(welcome_string, myfont, my_rect, (216, 216, 216), (48, 48, 48), 0)
+	my_rect = pygame.Rect((40, 40, WINDOWWIDTH - 95, 400))
+ 	rendered_text = render_textrect(wrtieUp, myfont, my_rect, (216, 216, 216), (48, 48, 48), 1)
 
 	DISPLAYSURF.fill(BGCOLOR)
-	DISPLAYSURF.blit(rendered_text, (WINDOWWIDTH/2, WINDOWHEIGHT/2))
+	DISPLAYSURF.blit(rendered_text, (my_rect.topleft))
 	
 	pygame.display.update()
-	
+
 	event = pygame.event.wait()
 
 	while event.type != KEYDOWN:
@@ -254,6 +255,21 @@ def startScreen():
 			pygame.quit()
 			sys.exit()
 
+#Things to do when the game starts
+
+def startScreen():
+
+	global myfont
+
+	BGCOLOR = (220,20,60)
+
+	welcome_string = "\n\nWelcome to the game\n\nHope You enjoy it\n\nClick any button to continue"
+	story_string = "\n\nOne day mummy duck was walking down the road.\n Soon the weather turned bad and it started raining.\n But, it wasn't water, Her eggs were falling!!!"
+	controls_string = "\nCONTROLS:\n\n-> : Move right\n\n<- : Move Left\n\nSPACEBAR: Jump\n\n(Hint: Dont let the chicks get away)"
+	
+	printThing(welcome_string)
+	printThing(story_string)
+	printThing(controls_string)
 
 
 #Things after the game is over
@@ -327,7 +343,7 @@ while True:
 
 	if( pygame.time.get_ticks() >= time + egg_delay):
 		time = pygame.time.get_ticks()
-		eggs.append(Egg(random.randint(max(duck_x - 50, 10), min(duck_x + 50, WINDOWWIDTH - 10)),egg_h))
+		eggs.append(Egg(random.randint(max(duck_x - 200, 10), min(duck_x + 200, WINDOWWIDTH - 10)),egg_h))
 		
 		#To make game tough <Add code for delay> probably exponential
 		#egg_delay -= 100
