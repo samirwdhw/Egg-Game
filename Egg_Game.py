@@ -242,6 +242,20 @@ class Egg(object):
 
 #To wait for a button click
 
+def waitEvent():
+
+	
+	event = pygame.event.wait()
+	
+	while event.type != KEYDOWN:
+		event = pygame.event.wait()
+
+		if event.type == QUIT:
+			pygame.quit()
+			sys.exit()
+
+#Print Something 
+
 def printThing(wrtieUp):
 
 	global DISPLAYSURF
@@ -309,8 +323,7 @@ def gameOverScreen():
 
 	pygame.display.update()
 
-	pygame.event.wait()
-	pygame.event.wait()
+	waitEvent()
 	pygame.quit()
 	sys.exit()
 
