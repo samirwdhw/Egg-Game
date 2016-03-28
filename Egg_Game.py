@@ -2,6 +2,7 @@
 
 import pygame, random, sys
 from pygame.locals import *
+import math
 
 pygame.init()
 
@@ -373,7 +374,10 @@ while True:
 		eggs.append(Egg(random.randint(max(duck_x - 200, 10), min(duck_x + 200, WINDOWWIDTH - 10)),egg_h))
 		
 		#To make game tough <Add code for delay> probably exponential
-		#egg_delay -= 100
+		#egg_delay = 750 + 500*(int(math.exp(-0.1*time/10000)))
+		if egg_delay > 750:
+			egg_delay -= 20 *time/2000
+
 
 	#To do with omlets
 
