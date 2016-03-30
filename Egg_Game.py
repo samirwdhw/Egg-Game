@@ -208,7 +208,7 @@ class Omlet(object):
 			else:
 				self.makeChick()
 				#To make the game difficult
-				MOTIONSPEED_CHICK += 1
+				MOTIONSPEED_CHICK += 0.5
 
 		elif pygame.time.get_ticks() > self.time + self.lag:
 			self.move()
